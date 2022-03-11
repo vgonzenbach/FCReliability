@@ -11,6 +11,7 @@ dense$Roi <- gsub("ROI", "", dense$Roi)
 heat <- NULL
 dists <- c()
 rois <- c()
+
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
   heat_sub <- pivot_wider(df[,-1], 
@@ -61,9 +62,10 @@ ndist <- length(unique(dense$Distance))
 heat <- NULL
 dists <- c()
 rois <- c()
+
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,1:4], 
+  heat_sub <- pivot_wider(df[,2:4], 
                           names_from = Session, 
                           values_from = Sub_Discriminability)
   heat <- rbind(heat, heat_sub[,-1])
@@ -113,7 +115,7 @@ dists <- c()
 rois <- c()
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,c(1:3, 5)], 
+  heat_sub <- pivot_wider(df[,c(2:3, 5)], 
                           names_from = Session, 
                           values_from = Sub_Identification)
   heat <- rbind(heat, heat_sub[,-1])
@@ -215,7 +217,7 @@ dists <- c()
 rois <- c()
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,1:4], 
+  heat_sub <- pivot_wider(df[,2:4], 
                           names_from = Session, 
                           values_from = Sub_Discriminability)
   heat <- rbind(heat, heat_sub[,-1])
@@ -265,7 +267,7 @@ dists <- c()
 rois <- c()
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,c(1:3, 5)], 
+  heat_sub <- pivot_wider(df[,c(2:3, 5)], 
                           names_from = Session, 
                           values_from = Sub_Identification)
   heat <- rbind(heat, heat_sub[,-1])
