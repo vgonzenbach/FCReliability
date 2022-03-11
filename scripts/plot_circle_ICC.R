@@ -1,5 +1,3 @@
-setwd("/Users/andrewac/Documents/GitHub/andy1764-Experiments/Collaborations/Aki-FCdists")
-
 library(circlize)
 library(ComplexHeatmap)
 library(tidyr)
@@ -31,8 +29,8 @@ png("figures/dense_ICC_circle.png", units="in", width=5, height=5, res=300)
 circos.clear()
 circos.par(gap.after = c(rep(2, ndist-1), 20))
 
-col_fun <- colorRamp2(c(0, 1), c("white", "blue"))
-text(0, 0, 'rownames.side = "inside"')
+col_fun <- colorRamp2(seq(0,1,.1), RColorBrewer::brewer.pal(11, 'Spectral'))
+##text(0, 0, 'rownames.side = "inside"')
 circos.heatmap(heat[,10:1], split = as.factor(dists), col = col_fun,
                track.height = 0.4,
                cluster = FALSE,
@@ -65,7 +63,7 @@ dists <- c()
 rois <- c()
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,2:5], 
+  heat_sub <- pivot_wider(df[,1:4], 
                           names_from = Session, 
                           values_from = Sub_Discriminability)
   heat <- rbind(heat, heat_sub[,-1])
@@ -81,8 +79,8 @@ png("figures/dense_discrim_circle.png", units="in", width=5, height=5, res=300)
 circos.clear()
 circos.par(gap.after = c(rep(2, ndist-1), 20))
 
-col_fun <- colorRamp2(c(0.8, 1), c("white", "blue"))
-text(0, 0, 'rownames.side = "inside"')
+col_fun <- colorRamp2(seq(0,1,.1), RColorBrewer::brewer.pal(11, 'Spectral'))
+#text(0, 0, 'rownames.side = "inside"')
 circos.heatmap(heat[,10:1], split = as.factor(dists), col = col_fun,
                track.height = 0.4,
                cluster = FALSE,
@@ -115,7 +113,7 @@ dists <- c()
 rois <- c()
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,c(2:4, 6)], 
+  heat_sub <- pivot_wider(df[,c(1:3, 5)], 
                           names_from = Session, 
                           values_from = Sub_Identification)
   heat <- rbind(heat, heat_sub[,-1])
@@ -131,8 +129,8 @@ png("figures/dense_identify_circle.png", units="in", width=5, height=5, res=300)
 circos.clear()
 circos.par(gap.after = c(rep(2, ndist-1), 20))
 
-col_fun <- colorRamp2(c(0, 1), c("white", "blue"))
-text(0, 0, 'rownames.side = "inside"')
+col_fun <- colorRamp2(seq(0,1,.1), RColorBrewer::brewer.pal(11, 'Spectral'))
+#text(0, 0, 'rownames.side = "inside"')
 circos.heatmap(heat[,10:1], split = as.factor(dists), col = col_fun,
                track.height = 0.4,
                cluster = FALSE,
@@ -183,8 +181,8 @@ png("figures/sparse_ICC_circle.png", units="in", width=5, height=5, res=300)
 circos.clear()
 circos.par(gap.after = c(rep(2, ndist-1), 20))
 
-col_fun <- colorRamp2(c(min(dense$Mean_ICC), max(dense$Mean_ICC)), c("white", "blue"))
-text(0, 0, 'rownames.side = "inside"')
+col_fun <- colorRamp2(seq(0,1,.1), RColorBrewer::brewer.pal(11, 'Spectral'))
+#text(0, 0, 'rownames.side = "inside"')
 circos.heatmap(heat[,10:1], split = as.factor(dists), col = col_fun,
                track.height = 0.4,
                cluster = FALSE,
@@ -217,7 +215,7 @@ dists <- c()
 rois <- c()
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,2:5], 
+  heat_sub <- pivot_wider(df[,1:4], 
                           names_from = Session, 
                           values_from = Sub_Discriminability)
   heat <- rbind(heat, heat_sub[,-1])
@@ -233,8 +231,8 @@ png("figures/sparse_discrim_circle.png", units="in", width=5, height=5, res=300)
 circos.clear()
 circos.par(gap.after = c(rep(2, ndist-1), 20))
 
-col_fun <- colorRamp2(c(0.8, 1), c("white", "blue"))
-text(0, 0, 'rownames.side = "inside"')
+col_fun <- colorRamp2(seq(0,1,.1), RColorBrewer::brewer.pal(11, 'Spectral'))
+#text(0, 0, 'rownames.side = "inside"')
 circos.heatmap(heat[,10:1], split = as.factor(dists), col = col_fun,
                track.height = 0.4,
                cluster = FALSE,
@@ -267,7 +265,7 @@ dists <- c()
 rois <- c()
 for (d in unique(dense$Distance)) {
   df <- dense[dense$Distance == d,]
-  heat_sub <- pivot_wider(df[,c(2:4, 6)], 
+  heat_sub <- pivot_wider(df[,c(1:3, 5)], 
                           names_from = Session, 
                           values_from = Sub_Identification)
   heat <- rbind(heat, heat_sub[,-1])
@@ -283,8 +281,8 @@ png("figures/sparse_identify_circle.png", units="in", width=5, height=5, res=300
 circos.clear()
 circos.par(gap.after = c(rep(2, ndist-1), 20))
 
-col_fun <- colorRamp2(c(0, 1), c("white", "blue"))
-text(0, 0, 'rownames.side = "inside"')
+col_fun <- colorRamp2(seq(0,1,.1), RColorBrewer::brewer.pal(11, 'Spectral'))
+#text(0, 0, 'rownames.side = "inside"')
 circos.heatmap(heat[,10:1], split = as.factor(dists), col = col_fun,
                track.height = 0.4,
                cluster = FALSE,
@@ -307,3 +305,4 @@ lgd = Legend(title = "Identifiability", col_fun = col_fun)
 grid.draw(lgd)
 
 dev.off()
+
