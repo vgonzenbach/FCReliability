@@ -189,7 +189,7 @@ plot_heatmap(df = sparse_df, metric = "Identifiability", f = sparse_df$Distance)
 
 To make colors comparable between dense and sparse data, I fixed the color endpoints for each of the metrics:
 
-- ICC: 0.2 - 0.8
+- ICC: 0.2 - 1
 - Discriminability: 0.8 - 1
 - Identifiability: 0.6 - 1
 
@@ -197,7 +197,7 @@ To make colors comparable between dense and sparse data, I fixed the color endpo
 ### Dense 
 
 ```{r dense_ICC_circle_manual}
-plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance, ends=c(0.2, 0.8))
+plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance, ends=c(0.2, 1))
 ```
 
 ```{r dense_discrim_circle_manual}
@@ -211,7 +211,7 @@ plot_heatmap(df = dense_df, metric = "Identifiability", f = dense_df$Distance, e
 ### Sparse
 
 ```{r sparse_ICC_circle_manual}
-plot_heatmap(df = sparse_df, metric = "ICC", f = sparse_df$Distance, ends=c(0.2, 0.8))
+plot_heatmap(df = sparse_df, metric = "ICC", f = sparse_df$Distance, ends=c(0.2, 1))
 ```
 
 ```{r sparse_discrim_circle_manual}
