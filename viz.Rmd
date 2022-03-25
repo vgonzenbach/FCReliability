@@ -1,5 +1,5 @@
 ---
-title: Visualizing ICC, Discriminability and Identifiability of Functional Connectivity
+title: Visualizing ICC, Discriminability and Identification Rate of Functional Connectivity
 author: "Virgilio Gonzenbach & Andrew Chen"
 date: "3/22/2022"
 output:
@@ -42,7 +42,7 @@ load.data = function(data.type){
   # Merge .csv files
   df = read.csv(sprintf("results/dis_idr_sub_%s.csv", data.type)) %>% merge(df, by = c("Distance", "ROI", "Session"), sort = FALSE)
   colnames(df) = gsub("Sub_", "", colnames(df))
-  colnames(df)[5] = "Identifiability"
+  colnames(df)[5] = "Identification Rate"
   
   # Order factors
   df$Distance = recode(df$Distance, `sqeuclidean` = "Squared Euclidean", `partial_correlation` = "Partial Correlation")
@@ -115,11 +115,11 @@ plot_heatmap = function(df, metric, f, col.range = "fitted", n.col = 11, ends = 
 
 ```{r, results='asis'}
 prt.rng = function(df){
-  ranges = c("ICC", "Discriminability", "Identifiability") %>% lapply(function(x){
+  ranges = c("ICC", "Discriminability", "Identification Rate") %>% lapply(function(x){
       round(range(df[,x]), 2)
   })
 
-  names(ranges) = c("ICC", "Discriminability", "Identifiability")
+  names(ranges) = c("ICC", "Discriminability", "Identification Rate")
   
   for (x in names(ranges)){
     cat(sprintf("- %s: %s - %s", x, ranges[[x]][1], ranges[[x]][2]), sep = "\n", fill=TRUE)
@@ -134,23 +134,23 @@ prt.rng(sparse_df)
 
 ### Histograms
  
-Discriminability and Identifiability values of 1 dominate the heatmaps.
+Discriminability and Identification Rate values of 1 dominate the heatmaps.
 
 ```{r}
-dense_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identifiability"), names_to="Metric", values_to = "Value") %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Dense FC Data")
+dense_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Dense FC Data")
 ```
 
 
 ```{r}
-dense_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identifiability"), names_to="Metric", values_to = "Value") %>% filter(Value < 1) %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Dense FC Data < 1")
+dense_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% filter(Value < 1) %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Dense FC Data < 1")
 ```
 
 ```{r}
-sparse_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identifiability"), names_to="Metric", values_to = "Value") %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Sparse FC Data")
+sparse_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Sparse FC Data")
 ```
 
 ```{r}
-sparse_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identifiability"), names_to="Metric", values_to = "Value") %>% filter(Value < 1) %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Sparse FC Data < 1")
+sparse_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% filter(Value < 1) %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Sparse FC Data < 1")
 ```
 
 ## Circle Plots (Fitted color range)
@@ -168,7 +168,7 @@ plot_heatmap(df = dense_df, metric = "Discriminability", f = dense_df$Distance)
 ```
 
 ```{r dense_identify_circle_fit}
-plot_heatmap(df = dense_df, metric = "Identifiability", f = dense_df$Distance)
+plot_heatmap(df = dense_df, metric = "Identification Rate", f = dense_df$Distance)
 ```
 
 ### Sparse
@@ -182,7 +182,7 @@ plot_heatmap(df = sparse_df, metric = "Discriminability", f = sparse_df$Distance
 ```
 
 ```{r sparse_identify_circe_fit}
-plot_heatmap(df = sparse_df, metric = "Identifiability", f = sparse_df$Distance)
+plot_heatmap(df = sparse_df, metric = "Identification Rate", f = sparse_df$Distance)
 ```
 
 ## Circle Plots (Manual color range)
@@ -191,7 +191,7 @@ To make colors comparable between dense and sparse data, I fixed the color endpo
 
 - ICC: 0.2 - 1
 - Discriminability: 0.8 - 1
-- Identifiability: 0.6 - 1
+- Identification Rate: 0.6 - 1
 
 
 ### Dense 
@@ -205,7 +205,7 @@ plot_heatmap(df = dense_df, metric = "Discriminability", f = dense_df$Distance, 
 ```
 
 ```{r dense_identify_circle_manual}
-plot_heatmap(df = dense_df, metric = "Identifiability", f = dense_df$Distance, ends=c(0.6, 1.0))
+plot_heatmap(df = dense_df, metric = "Identification Rate", f = dense_df$Distance, ends=c(0.6, 1.0))
 ```
 
 ### Sparse
@@ -219,5 +219,5 @@ plot_heatmap(df = sparse_df, metric = "Discriminability", f = sparse_df$Distance
 ```
 
 ```{r sparse_identify_circle_manual}
-plot_heatmap(df = sparse_df, metric = "Identifiability", f = sparse_df$Distance, ends=c(0.6, 1.0))
+plot_heatmap(df = sparse_df, metric = "Identification Rate", f = sparse_df$Distance, ends=c(0.6, 1.0))
 ```
