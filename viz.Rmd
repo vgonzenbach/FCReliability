@@ -159,29 +159,29 @@ Color endpoints of each circle plot were fixed to the minimum and maximum value 
 
 ### Dense 
 
-```{r dense_ICC_circle, warning=FALSE, message=FALSE}
+```{r dense_ICC_circle_fit, warning=FALSE, message=FALSE}
 plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance)
 ```
 
-```{r dense_discrim_circle}
+```{r dense_discrim_circle_fit}
 plot_heatmap(df = dense_df, metric = "Discriminability", f = dense_df$Distance)
 ```
 
-```{r dense_identify_circle}
+```{r dense_identify_circle_fit}
 plot_heatmap(df = dense_df, metric = "Identifiability", f = dense_df$Distance)
 ```
 
 ### Sparse
 
-```{r sparse_ICC_circle, warning=FALSE, message=FALSE}
+```{r sparse_ICC_circle_fit, warning=FALSE, message=FALSE}
 plot_heatmap(df = sparse_df, metric = "ICC", f = sparse_df$Distance)
 ```
 
-```{r sparse_discrim_circle}
+```{r sparse_discrim_circle_fit}
 plot_heatmap(df = sparse_df, metric = "Discriminability", f = sparse_df$Distance)
 ```
 
-```{r sparse_identifiability_circe}
+```{r sparse_identify_circe_fit}
 plot_heatmap(df = sparse_df, metric = "Identifiability", f = sparse_df$Distance)
 ```
 
@@ -196,28 +196,28 @@ To make colors comparable between dense and sparse data, I fixed the color endpo
 
 ### Dense 
 
-```{r dense_ICC_circle_0.2-0.8}
+```{r dense_ICC_circle_manual}
 plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance, ends=c(0.2, 0.8))
 ```
 
-```{r dense_discrim_circle_0.8-1}
+```{r dense_discrim_circle_manual}
 plot_heatmap(df = dense_df, metric = "Discriminability", f = dense_df$Distance, ends=c(0.8, 1.0))
 ```
 
-```{r dense_identify_circle_0.6-1}
+```{r dense_identify_circle_manual}
 plot_heatmap(df = dense_df, metric = "Identifiability", f = dense_df$Distance, ends=c(0.6, 1.0))
 ```
 
 ### Sparse
 
-```{r sparse_ICC_circle_0.2-0.8}
+```{r sparse_ICC_circle_manual}
 plot_heatmap(df = sparse_df, metric = "ICC", f = sparse_df$Distance, ends=c(0.2, 0.8))
 ```
 
-```{r sparse_discrim_circle_0.8-1}
+```{r sparse_discrim_circle_manual}
 plot_heatmap(df = sparse_df, metric = "Discriminability", f = sparse_df$Distance, ends=c(0.8, 1.0))
 ```
 
-```{r sparse_identify_circle_0.6-1}
+```{r sparse_identify_circle_manual}
 plot_heatmap(df = sparse_df, metric = "Identifiability", f = sparse_df$Distance, ends=c(0.6, 1.0))
 ```
