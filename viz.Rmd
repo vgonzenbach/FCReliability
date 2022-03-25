@@ -1,6 +1,5 @@
 ---
 title: Visualizing ICC, Discriminability and Identifiability of Functional Connectivity
-
 author: "Virgilio Gonzenbach & Andrew Chen"
 date: "3/22/2022"
 output:
@@ -46,7 +45,9 @@ load.data = function(data.type){
   colnames(df)[5] = "Identifiability"
   
   # Order factors
-  df$Distance = factor(df$Distance, levels = rev(c("correlation", "cosine", "covariance", "euclidean", "sqeuclidean", "tangent", "partial_correlation")))
+  df$Distance = recode(df$Distance, `sqeuclidean` = "Squared Euclidean", `partial_correlation` = "Partial Correlation")
+  df$Distance = tools::toTitleCase(df$Distance)
+  df$Distance = factor(df$Distance, levels = rev(c("Correlation", "Cosine", "Covariance", "Euclidean", "Squared Euclidean", "Tangent", "Partial Correlation")))
   df$ROI = factor(df$ROI, levels = sort(unique(df$ROI)))
   
   return(df)
@@ -180,7 +181,7 @@ plot_heatmap(df = sparse_df, metric = "ICC", f = sparse_df$Distance)
 plot_heatmap(df = sparse_df, metric = "Discriminability", f = sparse_df$Distance)
 ```
 
-```{r sparse discrim}
+```{r sparse_identifiability_circe}
 plot_heatmap(df = sparse_df, metric = "Identifiability", f = sparse_df$Distance)
 ```
 
