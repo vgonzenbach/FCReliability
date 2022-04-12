@@ -14,7 +14,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE,
                       message = FALSE,
-                      cache = TRUE,
+                      cache = FALSE,
                       cache.path = "cache/",
                       fig.path = 'figures/',
                       dpi = 300)
@@ -87,8 +87,12 @@ plot_heatmap = function(df, metric, f, col.range = "fitted", n.col = 11, ends = 
              ceiling(ends[2]*10)*.1)
   }
   
-  col_fun =  colorRamp2(seq(ends[1], ends[2], length.out = n.col), RColorBrewer::brewer.pal(n.col, 'Spectral'), space="RGB")
-  circos.heatmap(heat[,10:1], split = rep(unique(f), each = 10), col = col_fun,
+  base_colors = RColorBrewer::brewer.pal(11, 'Spectral')
+  names(base_colors) = seq(0, 1, .1)
+  breaks = seq(ends[1], ends[2], .1)
+  colors = base_colors[sapply(breaks, as.character)]
+  col_fun = colorRamp2(breaks, colors, space="RGB")
+  circos.heatmap(heat[,10:1], split = rep(levels(f), each = 10), col = col_fun,
                  track.height = 0.4,
                  cluster = FALSE,
                  rownames.side = "inside",
@@ -197,7 +201,7 @@ To make colors comparable between dense and sparse data, I fixed the color endpo
 ### Dense 
 
 ```{r dense_ICC_circle_manual}
-plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance, ends=c(0.2, 1))
+plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance, ends=c(0.2, 0.8))
 ```
 
 ```{r dense_discrim_circle_manual}
@@ -211,7 +215,7 @@ plot_heatmap(df = dense_df, metric = "Identification Rate", f = dense_df$Distanc
 ### Sparse
 
 ```{r sparse_ICC_circle_manual}
-plot_heatmap(df = sparse_df, metric = "ICC", f = sparse_df$Distance, ends=c(0.2, 1))
+plot_heatmap(df = sparse_df, metric = "ICC", f = sparse_df$Distance, ends=c(0.2, 0.8))
 ```
 
 ```{r sparse_discrim_circle_manual}
