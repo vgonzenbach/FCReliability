@@ -34,12 +34,12 @@ load.data = function(data.type){
   # Check arguments
   if (!(data.type %in% c("sparse", "dense"))) stop("Data type must be 'sparse' or 'dense'")
   
-  df = read.csv(sprintf("results/mean_icc_%s.csv", data.type))
+  df = read.csv(sprintf("data/mean_icc_%s.csv", data.type))
   colnames(df) = c("Distance", "ROI", "Session", "ICC")
   df$ROI = as.numeric(gsub("ROI", "", df$ROI))
   
   # Merge .csv files
-  df = read.csv(sprintf("results/dis_idr_sub_%s.csv", data.type)) %>% merge(df, by = c("Distance", "ROI", "Session"), sort = FALSE)
+  df = read.csv(sprintf("data/dis_idr_sub_%s.csv", data.type)) %>% merge(df, by = c("Distance", "ROI", "Session"), sort = FALSE)
   colnames(df) = gsub("Sub_", "", colnames(df))
   colnames(df)[5] = "Identification Rate"
   

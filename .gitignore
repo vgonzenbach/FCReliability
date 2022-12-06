@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-results/
 .DS_Store
 tmp/
 cache/
