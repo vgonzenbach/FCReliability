@@ -3,6 +3,10 @@
 .RData
 .Ruserdata
 .DS_Store
+.Rprofile
 tmp/
 cache/
 scripts/__pycache__
+renv/
+.venv/
+
