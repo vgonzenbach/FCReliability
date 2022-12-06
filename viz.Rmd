@@ -21,7 +21,6 @@ knitr::opts_chunk$set(echo = FALSE,
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 
-
 ```{r load_data, message=FALSE, warning=FALSE}
 library(dplyr)
 library(tidyr)
@@ -87,8 +86,8 @@ plot_heatmap = function(df, metric, f, col.range = "fitted", n.col = 11, ends = 
              ceiling(ends[2]*10)*.1)
   }
   
-  base_colors = RColorBrewer::brewer.pal(11, 'Spectral')
-  names(base_colors) = seq(0, 1, .1)
+  base_colors = RColorBrewer::brewer.pal(9, 'Spectral')
+  names(base_colors) = seq(.2, 1, length.out=9)
   breaks = seq(ends[1], ends[2], .1)
   colors = base_colors[sapply(breaks, as.character)]
   col_fun = colorRamp2(breaks, colors, space="RGB")
@@ -113,7 +112,7 @@ plot_heatmap = function(df, metric, f, col.range = "fitted", n.col = 11, ends = 
 }
 ```
 
-## Previsualization 
+## Previsualization
 
 ### Ranges
 
@@ -137,23 +136,22 @@ prt.rng(sparse_df)
 ```
 
 ### Histograms
- 
+
 Discriminability and Identification Rate values of 1 dominate the heatmaps.
 
-```{r}
+```{r hist_dense}
 dense_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Dense FC Data")
 ```
 
-
-```{r}
+```{r hist_dense_no1}
 dense_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% filter(Value < 1) %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Dense FC Data < 1")
 ```
 
-```{r}
+```{r hist_sparse}
 sparse_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Sparse FC Data")
 ```
 
-```{r}
+```{r hist_sparse_no1}
 sparse_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rate"), names_to="Metric", values_to = "Value") %>% filter(Value < 1) %>% ggplot(aes(x=Value)) + geom_histogram() + facet_wrap(~Metric) + ggtitle("Freq of values in Sparse FC Data < 1")
 ```
 
@@ -161,7 +159,7 @@ sparse_df %>% pivot_longer(cols=c("ICC", "Discriminability", "Identification Rat
 
 Color endpoints of each circle plot were fixed to the minimum and maximum value (floored and ceilinged to the nearest tenth respectively) to represent encompass all of the data for a given heatmap.
 
-### Dense 
+### Dense
 
 ```{r dense_ICC_circle_fit, warning=FALSE, message=FALSE}
 plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance)
@@ -193,12 +191,11 @@ plot_heatmap(df = sparse_df, metric = "Identification Rate", f = sparse_df$Dista
 
 To make colors comparable between dense and sparse data, I fixed the color endpoints for each of the metrics:
 
-- ICC: 0.2 - 1
-- Discriminability: 0.8 - 1
-- Identification Rate: 0.6 - 1
+-   ICC: 0.2 - 1
+-   Discriminability: 0.8 - 1
+-   Identification Rate: 0.6 - 1
 
-
-### Dense 
+### Dense
 
 ```{r dense_ICC_circle_manual}
 plot_heatmap(df = dense_df, metric = "ICC", f = dense_df$Distance, ends=c(0.2, 0.8))
