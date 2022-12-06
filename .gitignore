@@ -4,5 +4,6 @@
 .Ruserdata
 results/
 .DS_Store
-
 tmp/
+cache/
+scripts/__pycache__
