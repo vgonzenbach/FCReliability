@@ -1,0 +1,206 @@
+---
+title: Visualizing significant of ICC comparisons to Pearson correlation
+author: "Virgilio Gonzenbach"
+date: "04/26/2022"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      cache = FALSE,
+                      cache.path = "cache/",
+                      fig.path = 'figures/',
+                      dpi = 300)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```
+
+
+```{r load_data, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
+library(circlize)
+library(ggplot2)
+library(ComplexHeatmap)
+
+data.type = 'dense'
+load.data = function(data.type){
+  #' Load and prepares data from .csv files
+  
+  # Check arguments 
+  if (!(data.type %in% c("sparse", "dense"))) stop("Data type must be 'sparse' or 'dense'")
+  
+  df = read.csv(sprintf("results/icc_diff_between_distances_%s.csv", data.type))
+  colnames(df) = c("Distance", "ROI", "Session", "Lower_ICC_than_Pearson", "Higher_ICC_than_Pearson")
+  df[6:7] = NULL
+  df$ROI = as.numeric(gsub("ROI", "", df$ROI))
+  
+  df[, "Lower_ICC_than_Pearson"] = ifelse(as.logical(df[,"Lower_ICC_than_Pearson"]), -1, 0)
+  df[, "Higher_ICC_than_Pearson"] = ifelse(as.logical(df[, "Higher_ICC_than_Pearson"]), 1, 0)
+  df = df %>% mutate(Compared_to_Pearson = Lower_ICC_than_Pearson + Higher_ICC_than_Pearson)
+                                         
+  # Order factors
+  df$Distance = recode(df$Distance, `sqeuclidean` = "Squared Euclidean", `partial_correlation` = "Partial Correlation")
+  df$Distance = tools::toTitleCase(df$Distance)
+  df$Distance = factor(df$Distance, levels = rev(c("Correlation", "Cosine", "Covariance", "Euclidean", "Squared Euclidean", "Tangent", "Partial Correlation")))
+  df$ROI = factor(df$ROI, levels = sort(unique(df$ROI)))
+  
+  # Create data for Pearson correlation
+  tmp_df = split(df, df$Distance)[[1]]
+  tmp_df$Distance = "Correlation"
+  tmp_df$Compared_to_Pearson = 0
+  df = rbind(df, tmp_df)
+  
+  # Re-arrange
+  df = df %>% arrange(ROI, Session)
+  return(df)
+}
+
+dense_df = load.data("dense")
+sparse_df = load.data("sparse")
+```
+
+## Data Check
+
+### Dense
+
+There should be as many -1's in transformed data as True's in original data.
+
+```{r}
+prep_distance = function(df){
+  df$Distance = recode(df$Distance, `sqeuclidean` = "Squared Euclidean", `partial_correlation` = "Partial Correlation")
+  df$Distance = tools::toTitleCase(df$Distance)
+  df$Distance = factor(df$Distance, levels = rev(c("Correlation", "Cosine", "Covariance", "Euclidean", "Squared Euclidean", "Tangent", "Partial Correlation")))
+  return(df)
+}
+
+run_check = function(orig_df, transformed_df){
+  tbl1a = orig_df %>% group_by(Distance) %>% filter(Correlation_has_significantly_higher_ICC == 'True') %>%  count(Correlation_has_significantly_higher_ICC)
+  tbl2a = transformed_df %>% group_by(Distance) %>% filter(Compared_to_Pearson == -1) %>%  count(Compared_to_Pearson)
+  diffa = sum(tbl1a$n - tbl2a$n)
+  
+  tbl1b = orig_df %>% group_by(Distance) %>% filter(Correlation_has_significantly_lower_ICC == 'True') %>%  count(Correlation_has_significantly_lower_ICC)
+  tbl2b = transformed_df %>% group_by(Distance) %>% filter(Compared_to_Pearson == 1) %>%  count(Compared_to_Pearson)
+  diffb =  sum(tbl1b$n - tbl2b$n)
+  if(diffa == 0 & diffb == 0){
+    return("Data is consistent.")
+  }else{
+    return("Data is inconsistent.")
+  }
+}
+
+
+orig_dense_df = read.csv("results/icc_diff_between_distances_dense.csv") %>% prep_distance()
+
+orig_dense_df %>% group_by(Distance) %>% filter(Correlation_has_significantly_higher_ICC == 'True') %>%  count(Correlation_has_significantly_higher_ICC)
+
+dense_df %>% group_by(Distance) %>% filter(Compared_to_Pearson == -1) %>%  count(Compared_to_Pearson)
+```
+
+Below, There should be as many 1's in transformed data as True's in original data.
+
+```{r}
+orig_dense_df %>% group_by(Distance) %>% filter(Correlation_has_significantly_lower_ICC == 'True') %>%  count(Correlation_has_significantly_lower_ICC)
+dense_df %>% group_by(Distance) %>% filter(Compared_to_Pearson == 1) %>%  count(Compared_to_Pearson)
+```
+
+### Sparse
+
+There should be as many -1's in transformed data as True's in original data.
+
+```{r}
+orig_sparse_df = read.csv("results/icc_diff_between_distances_sparse.csv") %>% prep_distance()
+
+orig_sparse_df %>% group_by(Distance) %>% filter(Correlation_has_significantly_higher_ICC == 'True') %>%  count(Correlation_has_significantly_higher_ICC)
+sparse_df %>% group_by(Distance) %>% filter(Compared_to_Pearson == -1) %>%  count(Compared_to_Pearson)
+```
+
+Below, There should be as many 1's in transformed data as True's in original data.
+
+```{r}
+orig_sparse_df %>% group_by(Distance) %>% filter(Correlation_has_significantly_lower_ICC == 'True') %>%  count(Correlation_has_significantly_lower_ICC)
+sparse_df %>% group_by(Distance) %>% filter(Compared_to_Pearson == 1) %>%  count(Compared_to_Pearson)
+```
+
+```{r heatmap_funcs, warning=FALSE, message=FALSE}
+df = dense_df
+metric = 'Compared_to_Pearson'
+make_heatmap = function(df, metric){
+    #' Returns heatmap
+    heat <- NULL 
+
+    for (dist_df in split(df, df$Distance)){
+      heat_sub = dist_df %>% 
+        select(all_of(metric), "ROI", "Session") %>% 
+        pivot_wider(names_from = Session, values_from = metric)
+      heat = rbind(heat, as.matrix(heat_sub[,-1]))
+    }
+    rownames(heat) = rep(unique(df$ROI), times = length(levels(df$Distance)))
+    return(heat)
+  }
+
+df = dense_df
+metric = 'Compared_to_Pearson'
+f = df$Distance
+plot_heatmap = function(df, metric, f){
+  
+  heat = make_heatmap(df, metric)
+  
+  n.sectors = length(unique(f))
+  circos.clear() # Try w/o this line
+  circos.par(gap.after = c(rep(2, n.sectors - 1), 20))
+  
+  base_colors = c("red", "white", "dodgerblue")
+  names(base_colors) = c(-1, 0, 1)
+  breaks = seq(range(df[, metric])[1], range(df[, metric])[2], 1)
+  colors = base_colors[sapply(breaks, as.character)]
+  col_fun = colorRamp2(breaks, colors, space="RGB")
+  circos.heatmap(heat[,10:1], split = rep(levels(f), each = 10), col = col_fun,
+                 track.height = 0.4,
+                 cluster = FALSE,
+                 rownames.side = "inside",
+                 show.sector.labels = TRUE)
+  
+  circos.track(track.index = get.current.track.index(), panel.fun = function(x, y) {
+    if(CELL_META$sector.numeric.index == n.sectors) { # the last sector
+      cn = colnames(heat)
+      n = length(cn)
+      circos.text(rep(CELL_META$cell.xlim[2], n) + convert_x(1, "mm"), 
+                  1:n - 0.5, cn, 
+                  cex = 0.5, adj = c(0, 0.5), facing = "inside")
+      }
+    }, bg.border = NA)
+  
+  #lgd = Legend(title = metric, title_position = 'topcenter', col_fun = col_fun)
+  #grid.draw(lgd)
+}
+```
+
+## Circle Plots (Binary)
+
+### Dense 
+
+```{r dense_ICC_sig, warning=FALSE, message=FALSE}
+plot_heatmap(df = dense_df, metric = "Compared_to_Pearson", f = dense_df$Distance)
+```
+
+
+### Sparse
+
+```{r sparse_ICC_sig, warning=FALSE, message=FALSE}
+plot_heatmap(df = sparse_df, metric = "Compared_to_Pearson", f = sparse_df$Distance)
+```
+
+
+
+
+
+
+
+
