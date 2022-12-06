@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
 import os, tempfile
 
+def set_wd():
+    WORKDIR = os.path.join(os.path.dirname(__file__), '..')
+    os.chdir(WORKDIR)
+
 def crop(path):
     plot = Image.open(path)
     l = min(plot.size)
@@ -55,34 +59,35 @@ def vjoin_plots(paths, outfile):
 # Dense
 def main():
     # Set project root here
-    dense_out = '../figures/dense.png'
-    dense_paths = ['../figures/dense_ICC_circle_manual-1.png', 
-                   '../figures/dense_discrim_circle_manual-1.png', 
-                   '../figures/dense_identify_circle_manual-1.png']
+    set_wd()
+    dense_out = 'figures/dense.png'
+    dense_paths = ['figures/dense_ICC_circle_manual-1.png', 
+                   'figures/dense_discrim_circle_manual-1.png', 
+                   'figures/dense_identify_circle_manual-1.png']
     dtemps = []
     for p in dense_paths:
-        tmp, l = crop(p)
-        tmp = add_border(tmp, l)
+        tmp, _ = crop(p)
+        #tmp = add_border(tmp, l)
         dtemps.append(tmp)
 
     hjoin_plots(dtemps, dense_out)
 
     # Sparse
-    sparse_out = '../figures/sparse.png'
-    sparse_paths = ['../figures/sparse_ICC_circle_manual-1.png', 
-                    '../figures/sparse_discrim_circle_manual-1.png', 
-                    '../figures/sparse_identify_circle_manual-1.png']
+    sparse_out = 'figures/sparse.png'
+    sparse_paths = ['figures/sparse_ICC_circle_manual-1.png', 
+                    'figures/sparse_discrim_circle_manual-1.png', 
+                    'figures/sparse_identify_circle_manual-1.png']
     
     stemps = []
     for p in sparse_paths:
-        tmp, l = crop(p)
-        tmp = add_border(tmp, l)
+        tmp, _ = crop(p)
+        #tmp = add_border(tmp, l)
         stemps.append(tmp)
 
     hjoin_plots(stemps, sparse_out)
 
     # Together
-    vjoin_plots([dense_out, sparse_out], '../figures/dense+sparse.png')
+    vjoin_plots([dense_out, sparse_out], 'figures/dense+sparse.png')
     return dtemps, stemps
 
 if __name__ == "__main__":
